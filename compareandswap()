@@ -1,0 +1,25 @@
+#include <stdio.h>
+#include <stdatomic.h>
+#include <stdbool.h>
+
+// CAS 함수 구현 (atomic_compare_exchange_strong 사용)
+bool compare_and_swap(int *ptr, int expected, int newval) {
+    return atomic_compare_exchange_strong((_Atomic int *)ptr, &expected, newval);
+}
+
+int main() {
+    _Atomic int shared = 100;
+
+    int expected = 100;
+    int newval = 200;
+
+    printf("기존 값: %d\n", shared);
+
+    if (compare_and_swap(&shared, expected, newval)) {
+        printf("CAS 성공! 새로운 값: %d\n", shared);
+    } else {
+        printf("CAS 실패! 현재 값: %d\n", shared);
+    }
+
+    return 0;
+}
